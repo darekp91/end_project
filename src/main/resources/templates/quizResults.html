@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Wyniki Quizu</title>
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Wyniki Quizu</h1>
+    <p>Poprawne odpowiedzi: <span th:text="${correctCount}"></span> na <span th:text="${totalQuestions}"></span></p>
+  </div>
+
+  <div th:each="result : ${questionResults}" class="answers-container">
+    <p th:text="${result.question}">Pytanie</p>
+
+    <!-- Poprawna odpowiedź -->
+    <div class="correct-answer-tile">
+      <p th:text="${result.correctAnswer}">Poprawna odpowiedź</p>
+    </div>
+
+    <!-- Niepoprawne odpowiedzi -->
+    <div th:each="incorrectAnswer : ${result.incorrectAnswers}" th:classappend="${incorrectAnswer.equals(result.userAnswer) ? 'incorrect-answer-tile' : ''}">
+      <p th:text="${incorrectAnswer}"></p>
+    </div>
+  </div>
+
+  <div class="quiz-buttons">
+    <button onclick="window.location.href='/eras'">Powrót do strony głównej</button>
+  </div>
+</div>
+</body>
+</html>

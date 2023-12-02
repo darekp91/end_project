@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ery Historyczne</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <script>
+        let selectedEras = [];
+        let randomQuestionUrl = '/eras/random-question';
+        let quizUrl = '/quiz?questions=5'; // URL dla quizu
+
+        function updateSelectedEras() {
+            selectedEras = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(checkbox => checkbox.value);
+            updateRandomQuestionLink();
+            updateQuizLink(); // Dodanie aktualizacji URL dla quizu
+            console.log("Selected Eras: ", selectedEras);
+        }
+
+        function updateRandomQuestionLink() {
+            const queryParams = selectedEras.length > 0 ? '?eraIds=' + selectedEras.join(',') : '';
+            randomQuestionUrl = '/eras/random-question' + queryParams;
+        }
+
+        function updateQuizLink() {
+            const queryParams = selectedEras.length > 0 ? '?eraIds=' + selectedEras.join(',') + '&questions=5' : '?questions=5';
+            quizUrl = '/quiz' + queryParams;
+        }
+
+        function goToRandomQuestion() {
+            console.log("Navigating to: ", randomQuestionUrl);
+            window.location.href = randomQuestionUrl;
+        }
+
+        function goToQuiz(questions) {
+            const queryParams = selectedEras.length > 0 ? '?eraIds=' + selectedEras.join(',') + '&questions=' + questions : '?questions=' + questions;
+            window.location.href = '/eras/quiz' + queryParams;
+        }
+        function goToRandomChronoQuestion() {
+            const chronoQuestionUrl = selectedEras.length > 0 ? '/eras/random-chrono-question?eraIds=' + selectedEras.join(',') : '/eras/random-chrono-question';
+            console.log("Navigating to: ", chronoQuestionUrl);
+            window.location.href = chronoQuestionUrl;
+        }
+
+
+    </script>
+
+
+
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Ery Historyczne</h1>
+    </div>
+    <div class="era-selection">
+        <div th:each="era : ${eras}" class="era-tile" onclick="toggleEraSelection(this)">
+            <input type="checkbox" th:id="${'era' + era.id}" th:value="${era.id}" style="display: none;"/>
+            <label th:for="${'era' + era.id}" th:text="${era.era_name}"></label>
+        </div>
+    </div>
+    <div class="quiz-buttons">
+        <button onclick="goToRandomQuestion()">Losowe jedno pytanie zamknięte</button>
+        <button onclick="goToQuiz(5)">Quiz 5 pytań</button>
+        <button onclick="goToQuiz(10)">Quiz 10 pytań</button>
+        <button onclick="goToQuiz(15)">Quiz 15 pytań</button>
+        <button onclick="goToRandomChronoQuestion()">Losowe pytanie chronologiczne</button>
+
+    </div>
+</div>
+<script>
+    function toggleEraSelection(tileElement) {
+        const checkbox = tileElement.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
+        tileElement.classList.toggle('active');
+        updateSelectedEras();
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Losowe Pytanie</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1 th:text="${questionData.question}">Pytanie</h1>
+    </div>
+
+    <form id="answerForm" th:action="@{check-answer}" method="post" class="answers-container">
+        <div th:each="answer, iterStat : ${questionData.answers}" class="answer-tile">
+            <input type="radio" th:name="selectedAnswer" th:value="${answer}" th:id="${'answer' + iterStat.index}" />
+            <label th:for="${'answer' + iterStat.index}" th:text="${answer}"></label>
+        </div>
+        <input type="hidden" th:name="questionId" th:value="${questionData.id}" />
+    </form>
+
+    <div class="quiz-buttons">
+        <button id="halfOnHalfButton" th:attr="data-question-id=${questionData.id}" onclick="halfOnHalf(this)">Pół na pół</button>
+        <button onclick="toggleHint()">Wskazówka</button>
+        <button type="submit" form="answerForm">Sprawdź</button>
+    </div>
+
+    <p id="hint" style="display:none" th:text="${questionData.hint}"></p>
+
+    <div class="quiz-buttons">
+        <button onclick="window.location.href='/eras'">Powrót do strony głównej</button>
+    </div>
+</div>
+
+<script>
+    function halfOnHalf(buttonElement) {
+        const questionId = buttonElement.getAttribute('data-question-id');
+        console.log(questionId);
+        fetch('half-on-half/' + questionId)
+            .then(response => response.json())
+            .then(wrongAnswers => {
+                // Mieszanie otrzymanych błędnych odpowiedzi
+                shuffleArray(wrongAnswers);
+
+                // Ukrywamy pierwsze dwie błędne odpowiedzi
+                for (let i = 0; i < 2; i++) {
+                    if (wrongAnswers[i]) {
+                        const wrongAnswerElement = document.querySelector('input[value="' + wrongAnswers[i] + '"]');
+                        if (wrongAnswerElement) {
+                            wrongAnswerElement.parentElement.style.display = 'none';
+                        }
+                    }
+                }
+                buttonElement.disabled = true;
+            })
+    .catch(error => console.error('Error:', error));
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+
+    function toggleHint() {
+        var hintElement = document.getElementById("hint");
+        if (hintElement.style.display === "none") {
+            hintElement.style.display = "block";
+        } else {
+            hintElement.style.display = "none";
+        }
+    }
+</script>
+<script>
+    document.getElementById('answerForm').addEventListener('submit', function(event) {
+        var isAnyAnswerChecked = Array.from(document.querySelectorAll('input[type="radio"]'))
+            .some(input => input.checked);
+
+        if (!isAnyAnswerChecked) {
+            event.preventDefault(); // Zatrzymaj wysyłanie formularza
+            alert('Proszę wybrać odpowiedź'); // Wyświetl komunikat
+        }
+    });
+</script>
+
+
+</body>
+</html>

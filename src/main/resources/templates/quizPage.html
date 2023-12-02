@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quiz</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <script>
+        function toggleHint(hintId) {
+            let hintElement = document.getElementById(hintId);
+            if (hintElement) {
+                hintElement.style.display = hintElement.style.display === 'none' ? 'block' : 'none';
+            } else {
+                console.error('Element ' + hintId + ' not found');
+            }
+        }
+        function halfOnHalf(questionIndex, questionId) {
+            fetch('/eras/half-on-half/' + questionId)
+                .then(response => response.json())
+                .then(wrongAnswers => {
+                    console.log(wrongAnswers); // Debugowanie
+                    wrongAnswers.forEach(answer => {
+                        // Normalizacja identyfikatora odpowiedzi
+                        const normalizedAnswer = answer.replace(/\s+/g, '_');
+                        const answerElementId = 'answer' + questionIndex + '__' + normalizedAnswer;
+                        console.log('Trying to hide:', answerElementId); // Debugowanie
+                        const answerElement = document.getElementById(answerElementId);
+                        if (answerElement) {
+                            answerElement.parentElement.style.display = 'none';
+                        } else {
+                            console.error('Element not found:', answerElementId); // Informacja o błędzie
+                        }
+                    });
+                    document.getElementById('halfOnHalfButton' + questionIndex).disabled = true; // Wyłącz przycisk
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        function validateQuizSubmission() {
+            const questions = document.getElementsByClassName('quiz-question');
+            for (let i = 0; i < questions.length; i++) {
+                const answers = questions[i].querySelectorAll('input[type="radio"]');
+                const isAnswered = Array.from(answers).some(answer => answer.checked);
+                if (!isAnswered) {
+                    alert('Nie odpowiedziano na wszystkie pytania!');
+                    return false; // Zatrzymaj wysyłanie formularza
+                }
+            }
+            return true; // Wszystkie pytania zostały odpowiedziane, pozwól wysłać formularz
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Quiz</h1>
+    </div>
+
+    <form id="quizForm" th:action="@{/eras/submit-quiz}" method="post" onsubmit="return validateQuizSubmission()" class="quiz-form">
+        <div th:each="question, iterStat : ${quizQuestions}" class="quiz-question">
+            <h2 th:text="${question.question}">Pytanie</h2>
+            <input type="hidden" th:name="'questionId' + ${iterStat.index}" th:value="${question.id}" />
+            <div th:each="answer : ${question.answers}" class="answer-tile">
+                <input type="radio" th:name="'question' + ${iterStat.index}" th:value="${answer}" th:id="${'answer' + iterStat.index + '__' + #strings.replace(answer, ' ', '_')}"/>
+                <label th:for="${'answer' + iterStat.index + '__' + #strings.replace(answer, ' ', '_')}" th:text="${answer}"></label>
+            </div>
+            <div class="quiz-buttons">
+                <button type="button" class="button" th:id="${'halfOnHalfButton' + iterStat.index}" th:onclick="'halfOnHalf(' + ${iterStat.index} + ',' + ${question.id} + ')'" >Pół na pół</button>
+                <button type="button" class="button" th:onclick="'toggleHint(\'' + 'hint' + ${iterStat.index} + '\')'">Wskazówka</button>
+                <p th:id="'hint' + ${iterStat.index}" style="display:none" th:text="${question.hint}"></p>
+            </div>
+        </div>
+        <input type="hidden" name="totalQuestions" th:value="${quizQuestions.size()}"/>
+        <div class="quiz-buttons">
+            <button type="submit">Sprawdź</button>
+        </div>
+    </form>
+
+    <div class="quiz-buttons">
+        <button onclick="window.location.href='/eras'">Powrót do strony głównej</button>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,129 @@
+body {
+    font-family: 'Times New Roman', serif;
+    background: url('/images/tlo-drewniane-podlogi.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #3a3b3c;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.header h1 {
+    text-align: center;
+    font-family: 'Papyrus', fantasy;
+    color: #4a4e69;
+}
+
+.era-selection {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.era-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 150px;
+    margin: 10px;
+    background-color: #f4eed8;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Courier New', monospace;
+}
+
+.era-tile:hover {
+    background-color: #e4ddc3;
+}
+
+.era-tile.active {
+    border-color: #6b705c;
+    background-color: #b7b7a4;
+}
+
+.quiz-buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.quiz-buttons button {
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #6b705c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+}
+
+.quiz-buttons button:hover {
+    background-color: #b7b7a4;
+}
+
+.answers-container {
+    margin: 20px 0;
+}
+
+.answer-tile {
+    background-color: #f4eed8;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.answer-tile:hover {
+    background-color: #e4ddc3;
+}
+
+.answer-tile input[type="radio"] {
+    display: none;
+}
+
+.answer-tile input[type="radio"]:checked + label {
+    background-color: #6b705c;
+    color: white;
+}
+
+.answer-tile label {
+    display: block;
+    width: 100%;
+    padding: 10px;
+}
+
+.correct-answer-tile, .incorrect-answer-tile {
+    font-weight: bold;
+    padding: 8px; /* Zwiększona grubość kafelka */
+}
+
+.correct-answer-tile {
+    background-color: green;
+    color: white;
+}
+
+.incorrect-answer-tile {
+    background-color: red;
+    color: white;
+}
+
+.answers-list {
+    list-style: none;
+    padding: 0;
+}
+
+.answers-list li {
+    margin: 10px 0;
+    font-weight: bold;
+}

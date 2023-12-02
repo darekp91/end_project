@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Wynik</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1 th:text="${question.question}">Pytanie</h1>
+    </div>
+
+    <div class="answers-container">
+        <!-- Prawidłowa odpowiedź -->
+        <div th:classappend="${question.good_answer.equals(selectedAnswer) ? 'correct-answer-tile' : (question.good_answer.equals(selectedAnswer) ? '' : 'correct-answer-tile')}">
+            <p th:text="${question.good_answer}"></p>
+        </div>
+        <!-- Pozostałe odpowiedzi -->
+        <div th:classappend="${question.bad1_answer.equals(selectedAnswer) ? 'incorrect-answer-tile' : ''}">
+            <p th:text="${question.bad1_answer}"></p>
+        </div>
+        <div th:classappend="${question.bad2_answer.equals(selectedAnswer) ? 'incorrect-answer-tile' : ''}">
+            <p th:text="${question.bad2_answer}"></p>
+        </div>
+        <div th:classappend="${question.bad3_answer.equals(selectedAnswer) ? 'incorrect-answer-tile' : ''}">
+            <p th:text="${question.bad3_answer}"></p>
+        </div>
+    </div>
+
+    <div class="quiz-buttons">
+        <button onclick="window.location.href='/eras/random-question'">Kolejne pytanie</button>
+        <button onclick="window.location.href='/eras'">Powrót do strony głównej</button>
+    </div>
+</div>
+</body>
+</html>
